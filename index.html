@@ -366,7 +366,7 @@ body{font-family:DM Sans,sans-serif;font-size:15px;color:var(--ink)}
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="root"><div style="padding:20px;font-family:monospace;color:#7A8C84;font-size:13px">Loading React...</div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -2216,7 +2216,28 @@ function SplitModal({tx,setup,onSave,onClose}){
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+window.onerror = function(msg, src, line, col, err) {
+  document.getElementById('root').innerHTML = 
+    '<div style="padding:30px;font-family:monospace;background:#fef2f2;color:#c0484f;border:2px solid #fca5a5;margin:20px;border-radius:10px">' +
+    '<b>JS Error (line ' + line + '):</b><br><br>' + msg + '<br><br>' +
+    (err && err.stack ? err.stack.replace(/\n/g,'<br>') : '') +
+    '</div>';
+  return true;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  document.getElementById('root').innerHTML = 
+    '<div style="padding:30px;font-family:monospace;background:#fef2f2;color:#c0484f;border:2px solid #fca5a5;margin:20px;border-radius:10px">' +
+    '<b>Unhandled Promise Rejection:</b><br><br>' + (e.reason?.message || e.reason || 'Unknown') +
+    '</div>';
+});
+try {
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+} catch(e) {
+  document.getElementById('root').innerHTML = 
+    '<div style="padding:30px;font-family:monospace;background:#fef2f2;color:#c0484f;border:2px solid #fca5a5;margin:20px;border-radius:10px">' +
+    '<b>Render Error:</b><br><br>' + e.message + '<br><br>' + e.stack.replace(/\n/g,'<br>') +
+    '</div>';
+}
 
 
 </script>
